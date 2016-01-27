@@ -1,0 +1,6 @@
+C:\Users\Eric\Source\Workspaces\Workspace\Proto1\Proto1\bin\Proto1.dll.config
+C:\Users\Eric\Source\Workspaces\Workspace\Proto1\Proto1\bin\Proto1.dll
+C:\Users\Eric\Source\Workspaces\Workspace\Proto1\Proto1\bin\Proto1.pdb
+C:\Users\Eric\Source\Workspaces\Workspace\Proto1\Proto1\obj\Debug\Proto1.dll
+C:\Users\Eric\Source\Workspaces\Workspace\Proto1\Proto1\obj\Debug\Proto1.pdb
+C:\Users\Eric\Source\Workspaces\Workspace\Proto1\Proto1\obj\Debug\Proto1.csprojResolveAssemblyReference.cache

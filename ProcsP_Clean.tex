@@ -1,0 +1,935 @@
+CREATE PROCEDURE [dbo].[Agents_Insert]
+(	
+	@FirstName varchar(25),
+	@LastName varchar(25),
+	@Street varchar(25),
+	@City varchar(25),
+	@AgentState char(2),
+	@Zip int,
+	@BusPhone varchar(13),
+	@CellPhone varchar(13),
+	@Email varchar(75),
+	@LicenseType1 varchar(25),
+	@Type1Expiration varchar(25),
+	@LicenseType2 varchar(25),
+	@Type2Expiration varchar(25),
+	@HireDate Date,
+	@TerminationDate Date
+) AS BEGIN
+INSERT INTO [dbo].[Agents]
+			([FirstName],[LastName],[Street],[City],[AgentState],[Zip],[BusPhone],[CellPhone],[Email],[LicenseType1],[Type1Expiration], [LicenseType2],[Type2Expiration],[HireDate],[TerminationDate])
+VALUES
+			(@Firstname, @Lastname, @Street, @City, @AgentState,@Zip,@BusPhone,@CellPhone,@Email,@LicenseType1,@Type1Expiration,@LicenseType2,@Type2Expiration,@HireDate,@TerminationDate)
+			IF @@ROWCOUNT= 1
+				RETURN 1
+			ELSE
+				RETURN 0
+END
+CREATE PROCEDURE [dbo].[INS]
+(	
+	@AgentFirstName varchar(25),
+	@AgentLastName varchar(25),
+	@AgentStreet varchar(25),
+	@AgentCity varchar(25),
+	@AgentState char(2),
+	@AgentZip int,
+	@AgentBusPhone varchar(13),
+	@AgentCellPhone varchar(13),
+	@AgentEmail varchar(75),
+	@LicenseType1 varchar(25),
+	@Type1Expiration varchar(25),
+	@LicenseType2 varchar(25),
+	@Type2Expiration varchar(25),
+	@HireDate Date,
+	@TerminationDate Date,
+	--Contacts
+	@Title varchar(25),
+    @ContactFirstName varchar(35),
+    @ContactLastName varchar(35),
+    @BusinessName varchar(45),
+    @NumEmployees int,
+    @ContactType varchar(25),
+    @ContactStreet varchar(35),
+    @ContactCity varchar(25),
+    @ContactState char(2),
+    @ContactZip varchar(25),
+    @ContactBusPhone varchar(13),
+    @ContactHomePhone varchar(13),
+    @ContactCellPhone varchar(13),
+    @Fax varchar(25),
+    @ContactEmail varchar(75),
+    @Source varchar(45),
+    @Website varchar(200),
+    @Status varchar(25),
+	--Communications
+	@CommunicationType varchar(25),	
+	@Outcome varchar(25),
+	@CommunicationDate DATE,
+	@CommunicationTime varchar(25),
+	@FollowUp DATE,
+	@AgentID int,
+	@ContactID int
+) AS BEGIN
+INSERT INTO Agents([Agents].[FirstName],[Agents].[LastName],[Agents].[Street],[Agents].[City],[Agents].[AgentState],[Agents].[Zip],[Agents].[BusPhone],[Agents].[CellPhone],[Agents].[Email],[Agents].[LicenseType1],[Agents].[Type1Expiration],[Agents].[LicenseType2],[Agents].[Type2Expiration],[Agents].[HireDate],[Agents].[TerminationDate])			
+	VALUES(		   @AgentFirstName,     @AgentLastName,     @AgentStreet,     @AgentCity,     @AgentState,          @AgentZip,     @AgentBusPhone,     @AgentCellPhone,     @AgentEmail,     @LicenseType1,          @Type1Expiration,          @LicenseType2,          @Type2Expiration,          @HireDate,          @TerminationDate);
+INSERT INTO Contacts([Contacts].[Title],[Contacts].[FirstName],[Contacts].[LastName],[Contacts].[BusinessName],[Contacts].[NumEmployees],[Contacts].[ContactType],[Contacts].[Street],[Contacts].[City],[Contacts].[ContactState],[Contacts].[Zip],[Contacts].[BusPhone],[Contacts].[HomePhone],[Contacts].[CellPhone],[Contacts].[Fax],[Contacts].[Email],[Contacts].[Source],[Contacts].[Website],[Contacts].[Status])	
+	VALUES(			 @Title,	        @ContactFirstName,	   @ContactLastName,     @BusinessName,	           @NumEmployees,            @ContactType,            @ContactStreet,     @ContactCity,     @ContactState,            @ContactZip ,    @ContactBusPhone,     @ContactHomePhone,     @ContactCellPhone,     @Fax,            @ContactEmail,     @Source,            @Website,            @Status);        
+INSERT INTO	Communications([Communications].[CommunicationType],[Communications].[Outcome],[Communications].[CommunicationDate],[Communications].[CommunicationTime],[Communications].[FollowUp])	
+	VALUES(				   @CommunicationType,                  @Outcome,                  @CommunicationDate,                  @CommunicationTime,                  @FollowUp);             			
+			IF @@ROWCOUNT= 1
+				RETURN 1
+			ELSE
+				RETURN 0
+END
+CREATE PROCEDURE [dbo].[INS_TEST](	
+	@AgentFirstName varchar(25),
+	@AgentLastName varchar(25),
+	@AgentStreet varchar(25),
+	@AgentCity varchar(25),
+	@AgentState char(2),
+	@AgentZip int,
+	@AgentBusPhone varchar(13),
+	@AgentCellPhone varchar(13),
+	@AgentEmail varchar(75),
+	@LicenseType1 varchar(25),
+	@Type1Expiration varchar(25),
+	@LicenseType2 varchar(25),
+	@Type2Expiration varchar(25),
+	@HireDate Date,
+	@TerminationDate Date,
+						--Contacts
+	@Title varchar(25),
+    @ContactFirstName varchar(35),
+    @ContactLastName varchar(35),
+    @BusinessName varchar(45),
+    @NumEmployees int,
+    @ContactType varchar(25),
+    @ContactStreet varchar(35),
+    @ContactCity varchar(25),
+    @ContactState char(2),
+    @ContactZip varchar(25),
+    @ContactBusPhone varchar(13),
+    @ContactHomePhone varchar(13),
+    @ContactCellPhone varchar(13),
+    @Fax varchar(25),
+    @ContactEmail varchar(75),
+    @Source varchar(45),
+    @Website varchar(200),
+    @Status varchar(25),
+	@CommunicationID int,
+					--Communications
+	@CommunicationType varchar(25),	
+	@Outcome varchar(25),
+	@CommunicationDate DATE,
+	@CommunicationTime varchar(25),
+	@FollowUp DATE,
+	@AgentID int,
+	@ContactID int) AS BEGIN
+DECLARE @Existing as int = 0
+SELECT @Existing = Count(AgentID)
+FROM Agents
+WHERE AgentID = @AgentID
+IF @Existing > 0 
+BEGIN RAISERROR('ID Already Exists',1,1)
+	RETURN 0 
+END 
+	INSERT INTO Agents([Agents].[AgentID],[Agents].[FirstName],[Agents].[LastName],[Agents].[Street],[Agents].[City],[Agents].[AgentState],[Agents].[Zip],[Agents].[BusPhone],[Agents].[CellPhone],[Agents].[Email],[Agents].[LicenseType1],[Agents].[Type1Expiration],[Agents].[LicenseType2],[Agents].[Type2Expiration],[Agents].[HireDate],[Agents].[TerminationDate])			
+		VALUES(@AgentID,		   @AgentFirstName,     @AgentLastName,     @AgentStreet,     @AgentCity,     @AgentState,          @AgentZip,     @AgentBusPhone,     @AgentCellPhone,     @AgentEmail,     @LicenseType1,          @Type1Expiration,          @LicenseType2,          @Type2Expiration,          @HireDate,          @TerminationDate)
+	IF @@ROWCOUNT= 1
+				RETURN 1
+			ELSE
+				RETURN 0;
+SET @Existing  = 0
+SELECT @Existing = Count(ContactID)
+FROM Contacts
+WHERE ContactID = @ContactID
+IF @Existing > 0 BEGIN
+	RAISERROR('ID Already Exists',1,1)
+	RETURN 0
+END
+INSERT INTO Contacts([Contacts].[ContactID],[Contacts].[Title],[Contacts].[FirstName],[Contacts].[LastName],[Contacts].[BusinessName],[Contacts].[NumEmployees],[Contacts].[ContactType],[Contacts].[Street],[Contacts].[City],[Contacts].[ContactState],[Contacts].[Zip],[Contacts].[BusPhone],[Contacts].[HomePhone],[Contacts].[CellPhone],[Contacts].[Fax],[Contacts].[Email],[Contacts].[Source],[Contacts].[Website],[Contacts].[Status])	
+	VALUES(@ContactID,			 @Title,	        @ContactFirstName,	   @ContactLastName,     @BusinessName,	           @NumEmployees,            @ContactType,            @ContactStreet,     @ContactCity,     @ContactState,            @ContactZip ,    @ContactBusPhone,     @ContactHomePhone,     @ContactCellPhone,     @Fax,            @ContactEmail,     @Source,            @Website,            @Status)        
+	IF @@ROWCOUNT= 1
+				RETURN 1
+			ELSE
+				RETURN 0;
+SET @Existing  = 0
+SELECT @Existing = Count(CommunicationID)
+FROM Communications
+WHERE CommunicationID = @CommunicationID
+IF @Existing > 0 
+BEGIN
+	RAISERROR('ID Already Exists',1,1)
+	RETURN 0
+END
+INSERT INTO	Communications([Communications].[CommunicationID],[Communications].[CommunicationType],[Communications].[Outcome],[Communications].[CommunicationDate],[Communications].[CommunicationTime],[Communications].[FollowUp],[Communications].[AgentID],[Communications].[ContactID])	
+	VALUES(@CommunicationID,				   @CommunicationType,                  @Outcome,                  @CommunicationDate,                  @CommunicationTime,                  @FollowUp,					 @AgentID,		            @ContactID)             			
+			IF @@ROWCOUNT= 1
+				RETURN 1
+			ELSE
+				RETURN 0;
+END
+CREATE PROCEDURE [dbo].[INS3]
+(	
+	@AgentFirstName varchar(25),
+	@AgentLastName varchar(25),
+	@AgentStreet varchar(25),
+	@AgentCity varchar(25),
+	@AgentState char(2),
+	@AgentZip int,
+	@AgentBusPhone varchar(13),
+	@AgentCellPhone varchar(13),
+	@AgentEmail varchar(75),
+	@LicenseType1 varchar(25),
+	@Type1Expiration varchar(25),
+	@LicenseType2 varchar(25),
+	@Type2Expiration varchar(25),
+	@HireDate Date,
+	@TerminationDate Date,
+	--Contacts
+	@Title varchar(25),
+    @ContactFirstName varchar(35),
+    @ContactLastName varchar(35),
+    @BusinessName varchar(45),
+    @NumEmployees int,
+    @ContactType varchar(25),
+    @ContactStreet varchar(35),
+    @ContactCity varchar(25),
+    @ContactState char(2),
+    @ContactZip varchar(25),
+    @ContactBusPhone varchar(13),
+    @ContactHomePhone varchar(13),
+    @ContactCellPhone varchar(13),
+    @Fax varchar(25),
+    @ContactEmail varchar(75),
+    @Source varchar(45),
+    @Website varchar(200),
+    @Status varchar(25),
+	--Communications
+	@CommunicationType varchar(25),	
+	@Outcome varchar(25),
+	@CommunicationDate DATE,
+	@CommunicationTime varchar(25),
+	@FollowUp DATE,
+	@AgentID int,
+	@ContactID int
+) AS BEGIN
+INSERT INTO Agents([Agents].[FirstName],[Agents].[LastName],[Agents].[Street],[Agents].[City],[Agents].[AgentState],[Agents].[Zip],[Agents].[BusPhone],[Agents].[CellPhone],[Agents].[Email],[Agents].[LicenseType1],[Agents].[Type1Expiration],[Agents].[LicenseType2],[Agents].[Type2Expiration],[Agents].[HireDate],[Agents].[TerminationDate])			
+	VALUES(		   @AgentFirstName,     @AgentLastName,     @AgentStreet,     @AgentCity,     @AgentState,          @AgentZip,     @AgentBusPhone,     @AgentCellPhone,     @AgentEmail,     @LicenseType1,          @Type1Expiration,          @LicenseType2,          @Type2Expiration,          @HireDate,          @TerminationDate);
+	IF @@ROWCOUNT= 1
+				RETURN 1
+			ELSE
+				RETURN 0
+INSERT INTO Contacts([Contacts].[Title],[Contacts].[FirstName],[Contacts].[LastName],[Contacts].[BusinessName],[Contacts].[NumEmployees],[Contacts].[ContactType],[Contacts].[Street],[Contacts].[City],[Contacts].[ContactState],[Contacts].[Zip],[Contacts].[BusPhone],[Contacts].[HomePhone],[Contacts].[CellPhone],[Contacts].[Fax],[Contacts].[Email],[Contacts].[Source],[Contacts].[Website],[Contacts].[Status])	
+	VALUES(			 @Title,	        @ContactFirstName,	   @ContactLastName,     @BusinessName,	           @NumEmployees,            @ContactType,            @ContactStreet,     @ContactCity,     @ContactState,            @ContactZip ,    @ContactBusPhone,     @ContactHomePhone,     @ContactCellPhone,     @Fax,            @ContactEmail,     @Source,            @Website,            @Status);        
+	IF @@ROWCOUNT= 1
+				RETURN 1
+			ELSE
+				RETURN 0
+INSERT INTO	Communications([Communications].[CommunicationType],[Communications].[Outcome],[Communications].[CommunicationDate],[Communications].[CommunicationTime],[Communications].[FollowUp])	
+	VALUES(				   @CommunicationType,                  @Outcome,                  @CommunicationDate,                  @CommunicationTime,                  @FollowUp);             			
+			IF @@ROWCOUNT= 1
+				RETURN 1
+			ELSE
+				RETURN 0
+END
+CREATE PROCEDURE [dbo].[INSERT Agents_Contacts_Communications]
+(	
+	@AgentFirstName varchar(25),
+	@AgentLastName varchar(25),
+	@AgentStreet varchar(25),
+	@AgentCity varchar(25),
+	@AgentState char(2),
+	@AgentZip int,
+	@AgentBusPhone varchar(13),
+	@AgentCellPhone varchar(13),
+	@AgentEmail varchar(75),
+	@LicenseType1 varchar(25),
+	@Type1Expiration varchar(25),
+	@LicenseType2 varchar(25),
+	@Type2Expiration varchar(25),
+	@HireDate Date,
+	@TerminationDate Date,
+	--Contacts
+	@Title varchar(25),
+    @ContactFirstName varchar(35),
+    @ContactLastName varchar(35),
+    @BusinessName varchar(45),
+    @NumEmployees int,
+    @ContactType varchar(25),
+    @ContactStreet varchar(35),
+    @ContactCity varchar(25),
+    @ContactState char(2),
+    @ContactZip varchar(25),
+    @ContactBusPhone varchar(13),
+    @ContactHomePhone varchar(13),
+    @ContactCellPhone varchar(13),
+    @Fax varchar(25),
+    @ContactEmail varchar(75),
+    @Source varchar(45),
+    @Website varchar(200),
+    @Status varchar(25),
+	--Communications
+	@CommunicationType varchar(25),	
+	@Outcome varchar(25),
+	@CommunicationDate DATE,
+	@CommunicationTime varchar(25),
+	@FollowUp DATE,
+	@AgentID int,
+	@ContactID int
+) AS BEGIN
+INSERT INTO Agents([Agents].[FirstName],[Agents].[LastName],[Agents].[Street],[Agents].[City],[Agents].[AgentState],[Agents].[Zip],[Agents].[BusPhone],[Agents].[CellPhone],[Agents].[Email],[Agents].[LicenseType1],[Agents].[Type1Expiration],[Agents].[LicenseType2],[Agents].[Type2Expiration],[Agents].[HireDate],[Agents].[TerminationDate])			
+	VALUES(		   @AgentFirstName,     @AgentLastName,     @AgentStreet,     @AgentCity,     @AgentState,          @AgentZip,     @AgentBusPhone,     @AgentCellPhone,     @AgentEmail,     @LicenseType1,          @Type1Expiration,          @LicenseType2,          @Type2Expiration,          @HireDate,          @TerminationDate);
+INSERT INTO Contacts([Contacts].[Title],[Contacts].[FirstName],[Contacts].[LastName],[Contacts].[BusinessName],[Contacts].[NumEmployees],[Contacts].[ContactType],[Contacts].[Street],[Contacts].[City],[Contacts].[ContactState],[Contacts].[Zip],[Contacts].[BusPhone],[Contacts].[HomePhone],[Contacts].[CellPhone],[Contacts].[Fax],[Contacts].[Email],[Contacts].[Source],[Contacts].[Website],[Contacts].[Status])	
+	VALUES(			 @Title,	        @ContactFirstName,	   @ContactLastName,     @BusinessName,	           @NumEmployees,            @ContactType,            @ContactStreet,     @ContactCity,     @ContactState,            @ContactZip ,    @ContactBusPhone,     @ContactHomePhone,     @ContactCellPhone,     @Fax,            @ContactEmail,     @Source,            @Website,            @Status);        
+INSERT INTO	Communications([Communications].[CommunicationType],[Communications].[Outcome],[Communications].[CommunicationDate],[Communications].[CommunicationTime],[Communications].[FollowUp])	
+	VALUES(				   @CommunicationType,                  @Outcome,                  @CommunicationDate,                  @CommunicationTime,                  @FollowUp);             			
+			IF @@ROWCOUNT= 1
+				RETURN 1
+			ELSE
+				RETURN 0
+END
+CREATE PROCEDURE [dbo].[INSERT_Carriers]
+(	@Name varchar(25),	
+	@Street varchar(25),
+	@City varchar(25),
+	@CarrierState char(2),
+	@Zip int,
+	@Contact varchar(13),
+	@BusPhone varchar(13),
+	@CellPhone varchar(13),
+	@Email varchar(75)
+) AS BEGIN
+INSERT INTO [dbo].[Carriers]
+			([Name],[Street],[City],[CarrierState],[Zip],[Contact],[BusPhone],[CellPhone],[Email])
+VALUES
+			(@Name, @Street, @City, @CarrierState, @Zip, @Contact, @BusPhone, @CellPhone, @Email)
+			IF @@ROWCOUNT= 1
+				RETURN 1
+			ELSE
+				RETURN 0
+END
+CREATE PROCEDURE [dbo].[insert_new_Agent]
+(
+		    @FirstName varchar(25)
+           ,@LastName varchar(25)
+           ,@Street varchar(25)
+           ,@City varchar(25)
+           ,@AgentState char(2)
+           ,@Zip int
+           ,@BusPhone varchar(13)
+           ,@CellPhone varchar(13)
+           ,@Email varchar(75)
+           ,@LicenseType1 varchar(25)
+           ,@Type1Expiration varchar(25)
+           ,@LicenseType2 varchar(25)
+           ,@Type2Expiration varchar(25)
+           ,@HireDate date
+           ,@TerminationDate date) AS BEGIN 
+	INSERT INTO [dbo].[Agents]
+			([FirstName],[LastName],[Street],[City],[AgentState],[Zip],[BusPhone],[CellPhone],[Email],[LicenseType1],[Type1Expiration], [LicenseType2],[Type2Expiration],[HireDate],[TerminationDate])
+VALUES
+			(@Firstname, @Lastname, @Street, @City, @AgentState,@Zip,@BusPhone,@CellPhone,@Email,@LicenseType1,@Type1Expiration,@LicenseType2,@Type2Expiration,@HireDate,@TerminationDate)
+END
+CREATE PROCEDURE [dbo].[insert_new_BusinessProspect]
+(
+@BusName varchar(45)
+,@FollowUp varchar(645)
+,@BusSize int
+,@Contactid int
+) AS BEGIN
+INSERT INTO [dbo].[BusinessProspects]
+           ([BusName],[FollowUp],[BusSize],[Contactid])
+     VALUES
+           (@BusName ,@FollowUp ,@BusSize ,@Contactid )
+END
+CREATE PROCEDURE [dbo].[insert_new_Carrier]
+(
+		    @CarrierName varchar(25)
+           ,@Street varchar(25)
+           ,@City varchar(25)
+           ,@CarrierState char(2)
+           ,@Zip int
+           ,@Contact varchar(13)
+           ,@BusPhone varchar(13)
+           ,@CellPhone varchar(13)
+           ,@Email varchar(75)
+		   ) AS BEGIN 
+	   INSERT INTO [dbo].[Carriers]
+	(
+		[CarrierName],[Street],[City],[CarrierState],[Zip],[Contact],[BusPhone],[CellPhone],[Email]
+	)
+     VALUES
+	(
+		@CarrierName ,@Street ,@City ,@CarrierState ,@Zip ,@Contact ,@BusPhone ,@CellPhone ,@Email 
+	)
+END
+CREATE PROCEDURE [dbo].[insert_new_Communication]
+		(
+		    @CommunicationType varchar(25)
+           ,@Outcome varchar(25)
+           ,@CommunicationDate date
+           ,@CommunicationTime varchar(25)
+           ,@FollowUp date
+           ,@AgentID int
+           ,@ContactID int
+		) AS BEGIN	
+INSERT INTO [dbo].[Communications]
+	(
+		[CommunicationType],[Outcome],[CommunicationDate],[CommunicationTime],[FollowUp],[AgentID],[ContactID]
+	)
+     VALUES
+	(
+		@CommunicationType, @Outcome, @CommunicationDate, @CommunicationTime, @FollowUp, @AgentID, @ContactID 
+	)
+END
+CREATE PROCEDURE [dbo].[insert_new_Contact]
+			(
+			@Title varchar(25)
+           ,@FirstName varchar(35)
+           ,@LastName varchar(35)
+           ,@BusinessName varchar(45)
+           ,@NumEmployees int
+           ,@ContactType varchar(25)
+           ,@Street varchar(35)
+           ,@City varchar(25)
+           ,@ContactState char(2)
+           ,@Zip int
+           ,@BusPhone varchar(13)
+           ,@HomePhone varchar(13)
+           ,@CellPhone varchar(13)
+           ,@Fax varchar(25)
+           ,@Email varchar(75)
+           ,@Source varchar(45)
+           ,@Website varchar(200)
+           ,@Status varchar(25)
+		   ) AS BEGIN 
+	   INSERT INTO [dbo].[Contacts]
+           (
+[Title],[FirstName],[LastName],[BusinessName],[NumEmployees],[ContactType],[Street],[City],[ContactState],[Zip],[BusPhone],[HomePhone],[CellPhone],[Fax],[Email],[Source],[Website],[Status]
+		   )
+     VALUES
+           (
+@Title,@FirstName,@LastName,@BusinessName,@NumEmployees,@ContactType,@Street,@City,@ContactState,@Zip,@BusPhone,@HomePhone,@CellPhone,@Fax,@Email,@Source,@Website,@Status 
+		   )
+END
+CREATE PROCEDURE [dbo].[insert_new_Policy]
+		(
+		   @PolicyNumber varchar(10)
+           ,@TypeContact varchar(25)
+           ,@MonthlyCommission decimal(8,2)
+           ,@CarrierID int
+           ,@AgentID int
+		) AS BEGIN 
+	INSERT INTO [dbo].[Policies]
+           (
+		   [PolicyNumber],[TypeContact],[MonthlyCommission],[CarrierID],[AgentID]
+		   )
+     VALUES
+           (
+			@PolicyNumber, @TypeContact, @MonthlyCommission, @CarrierID, @AgentID 
+		   )
+END
+CREATE PROCEDURE [dbo].[myTest](@param1 as int OUTPUT) AS BEGIN
+	SELECT @param1
+	SET @param1 = 27
+	RETURN -1
+END
+CREATE PROC [dbo].[procedureCursor](@Agents CURSOR VARYING OUTPUT) AS BEGIN
+	SET @agents = CURSOR FOR
+	SELECT Firstname
+	FROM Agents
+	ORDER BY Firstname
+	OPEN @agents
+END
+CREATE proc [dbo].[securityTest]
+AS BEGIN
+	SELECT Firstname,Lastname
+	FROM dbo.agents
+END
+CREATE proc [dbo].[seeAgents]
+AS BEGIN
+	SELECT CONCAT(Firstname, + ' ' + Lastname) AS 'Agent List'
+	FROM dbo.agents
+END
+CREATE PROC [dbo].[SelectAgentWithMailAddress]
+AS BEGIN
+SELECT dbo.formatAddress(street,city,agentstate,zip) FROM [dbo].[agents]
+END
+CREATE FUNCTION [dbo].[formatAddress]
+(
+@Street as varchar(50), @city as varchar(50), @state as varchar(50), @zip as varchar(50)) RETURNS varchar(255) AS BEGIN
+	IF (@Street IS NULL OR
+	@city IS NULL OR
+	@state IS NULL OR
+	@zip IS NULL)
+	RETURN 'Incomplete Address'
+SET @state = 
+CASE @state
+	WHEN 'AL' THEN 'Alabama'
+WHEN 'AK' THEN 'Alaska'	
+WHEN 'AZ' THEN 'Arizona'	
+WHEN 'AR' THEN 'Arkansas'	
+WHEN 'CA' THEN 'California'	
+WHEN 'CO' THEN 'Colorado'
+WHEN 'CT' THEN 'Connecticut'
+WHEN 'DE' THEN 'Delaware'
+WHEN 'FL' THEN 'Florida'
+WHEN 'GA' THEN 'Georgia'
+WHEN 'HI' THEN 'Hawaii'
+WHEN 'ID' THEN 'Idaho'
+WHEN 'IL' THEN 'Illinois'
+WHEN 'IN' THEN 'Indiana'
+WHEN 'IA' THEN 'Iowa'
+WHEN 'KS' THEN 'Kansas'
+WHEN 'KY' THEN 'Kentucky'
+WHEN 'LA' THEN 'Louisiana'
+WHEN 'ME' THEN 'Maine'
+WHEN 'MD' THEN 'Maryland'
+WHEN 'MA' THEN 'Massachusetts'
+WHEN 'MI' THEN 'Michigan'
+WHEN 'MN' THEN 'Minnesota'
+WHEN 'MS' THEN 'Mississippi'
+WHEN 'MO' THEN 'Missouri'
+WHEN 'MT' THEN 'Montana'
+WHEN 'NE' THEN 'Nebraska'
+WHEN 'NV' THEN 'Nevada'
+WHEN 'NH' THEN 'New Hampshire'
+WHEN 'NJ' THEN 'New Jersey'
+WHEN 'NM' THEN 'New Mexico'
+WHEN 'NY' THEN 'New York'
+WHEN 'NC' THEN 'North Carolina'
+WHEN 'ND' THEN 'North Dakota'
+WHEN 'OH' THEN 'Ohio'
+WHEN 'OK' THEN 'Oklahoma'
+WHEN 'OR' THEN 'Oregon'
+WHEN 'PA' THEN 'Pennsylvania'
+WHEN 'RI' THEN 'Rhode Island'
+WHEN 'SC' THEN 'South Carolina'
+WHEN 'SD' THEN 'South Dakota'
+WHEN 'TN' THEN 'Tennessee'
+WHEN 'TX' THEN 'Texas'
+WHEN 'UT' THEN 'Utah'
+WHEN 'VT' THEN 'Vermont'
+WHEN 'VA' THEN 'Virginia'
+WHEN 'WA' THEN 'Washington'
+WHEN 'WV' THEN 'West Virginia'
+WHEN 'WI' THEN 'Wisconsin'
+WHEN 'WY' THEN 'Wyoming'
+END
+RETURN @street + ' ' + @city +', ' + @state + ' ' + @zip
+END
+CREATE FUNCTION [dbo].[myTestFunction]() RETURNS int AS BEGIN
+	return 'test'
+end
+	CREATE VIEW [dbo].[B_prospect_contactB] AS
+	SELECT  BusinessProspects.BusProspectID, BusinessProspects.BusName, Contacts.BusinessName,Contacts.NumEmployees
+	FROM BusinessProspects
+	JOIN Contacts
+	 ON BusinessProspects.Contactid = Contacts.Contactid
+CREATE PROCEDURE [dbo].[Appointment_list] AS BEGIN
+SELECT CONCAT(c.FirstName, c.LastName) as Contact, c.Homephone, c.cellphone, c.email,cm.communicationdate as'latest communication', cm.communicationTime as 'time of day', cm.followup as 'followup appointment'
+  FROM  contacts as c
+  JOIN communications as cm
+		ON c.contactid = cm.contactid
+WHERE cm.outcome IS NOT NULL 
+ORDER BY (SELECT MIN(communications.communicationDate) FROM communications GROUP BY communications.followup) DESC
+END
+CREATE PROCEDURE [dbo].[Appointments]
+@FirstName varchar(50),
+@LastName varchar(50),
+@BusinessName varchar(50),
+@Outcome varchar(1000) AS BEGIN
+SELECT [contacts].[FirstName], [contacts].[LastName], [contacts].[BusinessName],[Communications].[Outcome] FROM [Contacts]
+JOIN [communications]
+   ON [Contacts].[ContactID] = [Communications].[ContactID]
+WHERE [Communications].[followup]  IS NOT NULL
+END
+CREATE PROCEDURE [dbo].[carriers_agents]
+(
+@lastname varchar (25)
+) AS BEGIN
+SELECT [agents].[agentid],[agents].[lastname] as 'Contact', [agents].[cellphone] as 'Cell', [carriers].[carrierName] as 'carrier', [agents].[email]
+from [agents]
+join [carriers]
+	on [agents].[agentid] = [carriers].[carrierid]
+	where [agents].[lastname] LIKE '	@LastName	'
+END
+CREATE PROCEDURE [dbo].[com_con] 
+AS BEGIN
+SELECT [Communications].[CommunicationDate],[Communications].[CommunicationTime],[communications].[outcome] 
+FROM [Communications]
+JOIN [Contacts]
+	ON [communications].[contactid] = [contacts].[contactid]
+WHERE [communications].[contactID] = [communications].[contactID]
+END
+CREATE PROC [dbo].[Contact_Full_Address]
+AS BEGIN
+SELECT [dbo].formatAddress(street,city,Contactstate,zip) FROM [dbo].[Contacts]
+END
+CREATE PROCEDURE [dbo].[ContactCarrierInfo]
+(
+@RepLastName varchar (25)
+) AS BEGIN
+SELECT [Carriers].[RepLastName] as 'Contact', [carriers].[carrierName] AS 'Provider', [Carriers].[BusPhone] AS 'Contact Phone Number', [Carriers].[Email]
+FROM [Carriers]
+	WHERE [Carriers].[RepLastName] = '@RepLastName'
+END
+CREATE PROCEDURE [dbo].[DaysBetween]
+	(
+		@CommunicationDate date,
+		@CommunicationID date
+	) AS BEGIN
+--Count the days between two dates
+SELECT datediff("d", date1, date2) AS days
+FROM 
+	(SELECT CommunicationDate AS date1
+		FROM Communications
+		WHERE CommunicationID = 147) t1,
+	(SELECT CommunicationDate AS date2
+		FROM Communications
+		WHERE CommunicationID = 147) t2;
+END
+CREATE PROCEDURE [dbo].[insert_new_agent]			
+(			
+    @FirstName varchar(25)			
+           ,@LastName varchar(25)			
+           ,@Street varchar(25)			
+           ,@City varchar(25)			
+           ,@AgentState char(2)			
+           ,@Zip int			
+           ,@BusPhone varchar(13)			
+           ,@CellPhone varchar(13)			
+           ,@Email varchar(75)			
+           ,@LicenseType1 varchar(25)			
+           ,@Type1Expiration varchar(25)			
+           ,@LicenseType2 varchar(25)			
+           ,@Type2Expiration varchar(25)			
+           ,@HireDate date			
+           ,@TerminationDate date)			AS			BEGIN			
+INSERT INTO [dbo].[Agents]			
+			([FirstName],[LastName],[Street],[City],[AgentState],[Zip],[BusPhone],[CellPhone],[Email],[LicenseType1],[Type1Expiration], [LicenseType2],[Type2Expiration],[HireDate],[TerminationDate])
+VALUES			
+			(@Firstname, @Lastname, @Street, @City, @AgentState,@Zip,@BusPhone,@CellPhone,@Email,@LicenseType1,@Type1Expiration,@LicenseType2,@Type2Expiration,@HireDate,@TerminationDate)		
+END
+CREATE PROCEDURE [dbo].[insert_new_Carrier]			
+(			
+    @CarrierName varchar(25)			
+           ,@Street varchar(25)			
+           ,@City varchar(25)			
+           ,@CarrierState char(2)			
+           ,@Zip int			
+           ,@Contact varchar(13)			
+           ,@BusPhone varchar(13)			
+           ,@CellPhone varchar(13)			
+           ,@Email varchar(75)			
+		   )		AS			BEGIN				
+INSERT INTO [dbo].[Carriers]			
+(			
+[CarrierName],[Street],[City],[CarrierState],[Zip],[Contact],[BusPhone],[CellPhone],[Email]			
+)			
+     VALUES			
+(			
+@CarrierName ,@Street ,@City ,@CarrierState ,@Zip ,@Contact ,@BusPhone ,@CellPhone ,@Email 			
+)			
+END			
+CREATE PROCEDURE [dbo].[insert_new_Communication]			
+		(	
+		    @CommunicationType varchar(25)	
+           ,@Outcome varchar(25)			
+           ,@CommunicationDate date			
+           ,@CommunicationTime varchar(25)			
+           ,@FollowUp date			
+           ,@AgentID int			
+           ,@ContactID int			
+		)	AS			BEGIN				 	
+	INSERT INTO [dbo].[Communications]			
+(			
+[CommunicationType],[Outcome],[CommunicationDate],[CommunicationTime],[FollowUp],[AgentID],[ContactID]			
+)			
+     VALUES			
+(			
+@CommunicationType, @Outcome, @CommunicationDate, @CommunicationTime, @FollowUp, @AgentID, @ContactID 			
+)						
+END			
+CREATE PROCEDURE [dbo].[insert_new_Contact]			
+			(
+			@AgentID int
+		   ,@Title varchar(25)
+           ,@FirstName varchar(35)			
+           ,@LastName varchar(35)			
+           ,@BusinessName varchar(45)			
+           ,@NumEmployees int			
+           ,@ContactType varchar(25)			
+           ,@Street varchar(35)			
+           ,@City varchar(25)			
+           ,@ContactState char(2)			
+           ,@Zip int			
+           ,@BusPhone varchar(13)			
+           ,@HomePhone varchar(13)			
+           ,@CellPhone varchar(13)			
+           ,@Fax varchar(25)			
+           ,@Email varchar(75)			
+           ,@Source varchar(45)			
+           ,@Website varchar(200)			
+           ,@Status varchar(25)
+		   ,@Notes varchar(1000)			
+		   )	AS			BEGIN			
+INSERT INTO [dbo].[Contacts]			
+           (			
+[AgentID],[Title],[FirstName],[LastName],[BusinessName],[NumEmployees],[ContactType],[Street],[City],[ContactState],[Zip],[BusPhone],[HomePhone],[CellPhone],[Fax],[Email],[Source],[Website],[Status],[Notes]			
+		   )	
+     VALUES			
+           (			
+@AgentID,@Title,@FirstName,@LastName,@BusinessName,@NumEmployees,@ContactType,@Street,@City,@ContactState,@Zip,@BusPhone,@HomePhone,@CellPhone,@Fax,@Email,@Source,@Website,@Status,@Notes 			
+		   )		
+END
+CREATE PROCEDURE [dbo].[insert_new_Policy]
+        (
+		    @ContactID int
+           ,@PolicyNumber varchar(10)
+           ,@Carrier varchar(25)
+           ,@Type varchar(25)
+           ,@Commissions decimal(8,2)
+           ,@CarrierID int
+           ,@Subscribers int
+		) AS BEGIN
+	INSERT INTO [dbo].[Policies]
+	(
+	   [ContactID],[PolicyNumber],[Carrier],[Type],[Commissions],[CarrierID],[Subscribers]
+	)
+	 VALUES
+		(
+		    @ContactID
+           ,@PolicyNumber 
+           ,@Carrier 
+           ,@Type 
+           ,@Commissions 
+           ,@CarrierID 
+           ,@Subscribers
+	    )
+END
+CREATE PROCEDURE [dbo].[NewComm]
+			(
+		   -----------params for Contacts
+					@Notes varchar(1000)
+					,@FirstName varchar(35)
+					,@LastName varchar(35)
+					,@BusPhone varchar(13)
+					,@HomePhone varchar(13)
+					,@CellPhone varchar(13)
+					,@Street varchar(35)
+					,@City varchar(25)
+					,@ContactState char(2)
+					,@Zip int
+			) 
+			AS
+					INSERT INTO Contacts
+			(
+				[Contacts].[Notes]
+				,[Contacts].[FirstName]
+				,[Contacts].[LastName]
+				,[Contacts].[BusPhone]
+				,[Contacts].[HomePhone]
+				,[Contacts].[CellPhone]
+				,[Contacts].[Street]
+				,[Contacts].[City]
+				,[Contacts].[ContactState]
+				,[Contacts].[Zip]
+			)
+	VALUES
+			(	 
+				@Notes 
+				,@FirstName 
+				,@LastName 
+				,@BusPhone 
+				,@HomePhone 
+				,@CellPhone 
+				,@Street
+				,@City
+				,@ContactState
+				,@Zip
+			)
+CREATE PROCEDURE [dbo].[NewDeleteCommand]
+(
+	@Original_AgentID int,
+	@IsNull_FirstName Int,
+	@Original_FirstName varchar(25),
+	@IsNull_LastName Int,
+	@Original_LastName varchar(25),
+	@IsNull_Street Int,
+	@Original_Street varchar(25),
+	@IsNull_City Int,
+	@Original_City varchar(25),
+	@IsNull_AgentState Int,
+	@Original_AgentState char(2),
+	@IsNull_Zip Int,
+	@Original_Zip int,
+	@IsNull_BusPhone Int,
+	@Original_BusPhone varchar(13),
+	@IsNull_CellPhone Int,
+	@Original_CellPhone varchar(13),
+	@IsNull_Email Int,
+	@Original_Email varchar(75),
+	@IsNull_LicenseType1 Int,
+	@Original_LicenseType1 varchar(25),
+	@IsNull_Type1Expiration Int,
+	@Original_Type1Expiration varchar(25),
+	@IsNull_LicenseType2 Int,
+	@Original_LicenseType2 varchar(25),
+	@IsNull_Type2Expiration Int,
+	@Original_Type2Expiration varchar(25),
+	@IsNull_HireDate Int,
+	@Original_HireDate date,
+	@IsNull_TerminationDate Int,
+	@Original_TerminationDate date
+) AS SET NOCOUNT OFF;
+DELETE FROM [Agents] WHERE (([AgentID] = @Original_AgentID) AND ((@IsNull_FirstName = 1 AND [FirstName] IS NULL) OR ([FirstName] = @Original_FirstName)) AND ((@IsNull_LastName = 1 AND [LastName] IS NULL) OR ([LastName] = @Original_LastName)) AND ((@IsNull_Street = 1 AND [Street] IS NULL) OR ([Street] = @Original_Street)) AND ((@IsNull_City = 1 AND [City] IS NULL) OR ([City] = @Original_City)) AND ((@IsNull_AgentState = 1 AND [AgentState] IS NULL) OR ([AgentState] = @Original_AgentState)) AND ((@IsNull_Zip = 1 AND [Zip] IS NULL) OR ([Zip] = @Original_Zip)) AND ((@IsNull_BusPhone = 1 AND [BusPhone] IS NULL) OR ([BusPhone] = @Original_BusPhone)) AND ((@IsNull_CellPhone = 1 AND [CellPhone] IS NULL) OR ([CellPhone] = @Original_CellPhone)) AND ((@IsNull_Email = 1 AND [Email] IS NULL) OR ([Email] = @Original_Email)) AND ((@IsNull_LicenseType1 = 1 AND [LicenseType1] IS NULL) OR ([LicenseType1] = @Original_LicenseType1)) AND ((@IsNull_Type1Expiration = 1 AND [Type1Expiration] IS NULL) OR ([Type1Expiration] = @Original_Type1Expiration)) AND ((@IsNull_LicenseType2 = 1 AND [LicenseType2] IS NULL) OR ([LicenseType2] = @Original_LicenseType2)) AND ((@IsNull_Type2Expiration = 1 AND [Type2Expiration] IS NULL) OR ([Type2Expiration] = @Original_Type2Expiration)) AND ((@IsNull_HireDate = 1 AND [HireDate] IS NULL) OR ([HireDate] = @Original_HireDate)) AND ((@IsNull_TerminationDate = 1 AND [TerminationDate] IS NULL) OR ([TerminationDate] = @Original_TerminationDate)))
+CREATE PROCEDURE [dbo].[NewUpdateCommand]
+(
+	@FirstName varchar(25),
+	@LastName varchar(25),
+	@Street varchar(25),
+	@City varchar(25),
+	@AgentState char(2),
+	@Zip int,
+	@BusPhone varchar(13),
+	@CellPhone varchar(13),
+	@Email varchar(75),
+	@LicenseType1 varchar(25),
+	@Type1Expiration varchar(25),
+	@LicenseType2 varchar(25),
+	@Type2Expiration varchar(25),
+	@HireDate date,
+	@TerminationDate date,
+	@Original_AgentID int,
+	@IsNull_FirstName Int,
+	@Original_FirstName varchar(25),
+	@IsNull_LastName Int,
+	@Original_LastName varchar(25),
+	@IsNull_Street Int,
+	@Original_Street varchar(25),
+	@IsNull_City Int,
+	@Original_City varchar(25),
+	@IsNull_AgentState Int,
+	@Original_AgentState char(2),
+	@IsNull_Zip Int,
+	@Original_Zip int,
+	@IsNull_BusPhone Int,
+	@Original_BusPhone varchar(13),
+	@IsNull_CellPhone Int,
+	@Original_CellPhone varchar(13),
+	@IsNull_Email Int,
+	@Original_Email varchar(75),
+	@IsNull_LicenseType1 Int,
+	@Original_LicenseType1 varchar(25),
+	@IsNull_Type1Expiration Int,
+	@Original_Type1Expiration varchar(25),
+	@IsNull_LicenseType2 Int,
+	@Original_LicenseType2 varchar(25),
+	@IsNull_Type2Expiration Int,
+	@Original_Type2Expiration varchar(25),
+	@IsNull_HireDate Int,
+	@Original_HireDate date,
+	@IsNull_TerminationDate Int,
+	@Original_TerminationDate date,
+	@AgentID int
+) AS SET NOCOUNT OFF;
+UPDATE [Agents] SET [FirstName] = @FirstName, [LastName] = @LastName, [Street] = @Street, [City] = @City, [AgentState] = @AgentState, [Zip] = @Zip, [BusPhone] = @BusPhone, [CellPhone] = @CellPhone, [Email] = @Email, [LicenseType1] = @LicenseType1, [Type1Expiration] = @Type1Expiration, [LicenseType2] = @LicenseType2, [Type2Expiration] = @Type2Expiration, [HireDate] = @HireDate, [TerminationDate] = @TerminationDate WHERE (([AgentID] = @Original_AgentID) AND ((@IsNull_FirstName = 1 AND [FirstName] IS NULL) OR ([FirstName] = @Original_FirstName)) AND ((@IsNull_LastName = 1 AND [LastName] IS NULL) OR ([LastName] = @Original_LastName)) AND ((@IsNull_Street = 1 AND [Street] IS NULL) OR ([Street] = @Original_Street)) AND ((@IsNull_City = 1 AND [City] IS NULL) OR ([City] = @Original_City)) AND ((@IsNull_AgentState = 1 AND [AgentState] IS NULL) OR ([AgentState] = @Original_AgentState)) AND ((@IsNull_Zip = 1 AND [Zip] IS NULL) OR ([Zip] = @Original_Zip)) AND ((@IsNull_BusPhone = 1 AND [BusPhone] IS NULL) OR ([BusPhone] = @Original_BusPhone)) AND ((@IsNull_CellPhone = 1 AND [CellPhone] IS NULL) OR ([CellPhone] = @Original_CellPhone)) AND ((@IsNull_Email = 1 AND [Email] IS NULL) OR ([Email] = @Original_Email)) AND ((@IsNull_LicenseType1 = 1 AND [LicenseType1] IS NULL) OR ([LicenseType1] = @Original_LicenseType1)) AND ((@IsNull_Type1Expiration = 1 AND [Type1Expiration] IS NULL) OR ([Type1Expiration] = @Original_Type1Expiration)) AND ((@IsNull_LicenseType2 = 1 AND [LicenseType2] IS NULL) OR ([LicenseType2] = @Original_LicenseType2)) AND ((@IsNull_Type2Expiration = 1 AND [Type2Expiration] IS NULL) OR ([Type2Expiration] = @Original_Type2Expiration)) AND ((@IsNull_HireDate = 1 AND [HireDate] IS NULL) OR ([HireDate] = @Original_HireDate)) AND ((@IsNull_TerminationDate = 1 AND [TerminationDate] IS NULL) OR ([TerminationDate] = @Original_TerminationDate)));
+SELECT AgentID, FirstName, LastName, Street, City, AgentState, Zip, BusPhone, CellPhone, Email, LicenseType1, Type1Expiration, LicenseType2, Type2Expiration, HireDate, TerminationDate FROM Agents WHERE (AgentID = @AgentID)
+CREATE PROCEDURE [dbo].[randomInteger] AS BEGIN
+DECLARE @Random INT;
+DECLARE @Upper INT;
+DECLARE @Lower INT
+SET @Lower = 1 
+SET @Upper = 9 
+SELECT @Random = ROUND(((@Upper - @Lower -1) * RAND() + @Lower), 0)
+SELECT @Random
+END
+CREATE PROCEDURE [dbo].[SELECT_agent_IDENTITY]
+AS
+	SET NOCOUNT ON;
+SELECT AgentID, FirstName, LastName, Street, City, AgentState, Zip, BusPhone, CellPhone, Email, LicenseType1, Type1Expiration, LicenseType2, Type2Expiration, HireDate, TerminationDate FROM Agents WHERE (AgentID = SCOPE_IDENTITY())
+CREATE PROC [dbo].[SelectAgentWithMailAddress]
+AS BEGIN
+SELECT dbo.formatAddress(street,city,agentstate,zip) FROM [dbo].[agents]
+END
+CREATE FUNCTION [dbo].[formatAddress]
+(@Street as varchar(50),
+@city as varchar(50),
+@state as varchar(50),
+@zip as varchar(50)
+)	RETURNS varchar(255) AS BEGIN
+	IF (@Street IS NULL OR
+	@city IS NULL OR
+	@state IS NULL OR
+	@zip IS NULL)
+	RETURN 'Incomplete Address'
+SET @state = 
+CASE @state
+	WHEN 'AL' THEN 'Alabama'
+WHEN 'AK' THEN 'Alaska'	
+WHEN 'AZ' THEN 'Arizona'	
+WHEN 'AR' THEN 'Arkansas'	
+WHEN 'CA' THEN 'California'	
+WHEN 'CO' THEN 'Colorado'
+WHEN 'CT' THEN 'Connecticut'
+WHEN 'DE' THEN 'Delaware'
+WHEN 'FL' THEN 'Florida'
+WHEN 'GA' THEN 'Georgia'
+WHEN 'HI' THEN 'Hawaii'
+WHEN 'ID' THEN 'Idaho'
+WHEN 'IL' THEN 'Illinois'
+WHEN 'IN' THEN 'Indiana'
+WHEN 'IA' THEN 'Iowa'
+WHEN 'KS' THEN 'Kansas'
+WHEN 'KY' THEN 'Kentucky'
+WHEN 'LA' THEN 'Louisiana'
+WHEN 'ME' THEN 'Maine'
+WHEN 'MD' THEN 'Maryland'
+WHEN 'MA' THEN 'Massachusetts'
+WHEN 'MI' THEN 'Michigan'
+WHEN 'MN' THEN 'Minnesota'
+WHEN 'MS' THEN 'Mississippi'
+WHEN 'MO' THEN 'Missouri'
+WHEN 'MT' THEN 'Montana'
+WHEN 'NE' THEN 'Nebraska'
+WHEN 'NV' THEN 'Nevada'
+WHEN 'NH' THEN 'New Hampshire'
+WHEN 'NJ' THEN 'New Jersey'
+WHEN 'NM' THEN 'New Mexico'
+WHEN 'NY' THEN 'New York'
+WHEN 'NC' THEN 'North Carolina'
+WHEN 'ND' THEN 'North Dakota'
+WHEN 'OH' THEN 'Ohio'
+WHEN 'OK' THEN 'Oklahoma'
+WHEN 'OR' THEN 'Oregon'
+WHEN 'PA' THEN 'Pennsylvania'
+WHEN 'RI' THEN 'Rhode Island'
+WHEN 'SC' THEN 'South Carolina'
+WHEN 'SD' THEN 'South Dakota'
+WHEN 'TN' THEN 'Tennessee'
+WHEN 'TX' THEN 'Texas'
+WHEN 'UT' THEN 'Utah'
+WHEN 'VT' THEN 'Vermont'
+WHEN 'VA' THEN 'Virginia'
+WHEN 'WA' THEN 'Washington'
+WHEN 'WV' THEN 'West Virginia'
+WHEN 'WI' THEN 'Wisconsin'
+WHEN 'WY' THEN 'Wyoming'
+END
+RETURN @street + ' ' + @city +', ' + @state + ' ' + @zip
+END
+CREATE VIEW [dbo].[ALL_CONTACTS]
+AS
+SELECT * FROM CONTACTS
+CREATE VIEW [dbo].[myView]
+AS
+SELECT Source
+FROM CONTACTS
+WHERE Source = 'Database'
+CREATE VIEW [dbo].[Referrals]
+AS
+SELECT CONCAT(FirstName,LastName)ContactType,BusPhone,Source
+FROM CONTACTS
+WHERE Source = 'Referral'

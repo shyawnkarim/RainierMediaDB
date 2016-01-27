@@ -1,0 +1,109 @@
+
+
+DROP TABLE Agents
+CREATE TABLE [dbo].[Agents]
+(
+ [AgentID] INT IDENTITY (1,1) NOT NULL,
+ [FirstName] VARCHAR(25)DEFAULT NULL,
+ [LastName] VARCHAR(25) DEFAULT NULL,
+ [Street] VARCHAR(25) DEFAULT NULL,
+ [City] VARCHAR(25) DEFAULT NULL,
+ [AgentState] CHAR(2) DEFAULT NULL,
+ [Zip] INT DEFAULT NULL,
+ [BusPhone] VARCHAR(13) DEFAULT NULL,
+ [CellPhone] VARCHAR(13) DEFAULT NULL,
+ [Email] VARCHAR(75) DEFAULT NULL,
+ [LicenseType1] VARCHAR(25) DEFAULT NULL,
+ [Type1Expiration] VARCHAR(25) DEFAULT NULL,
+ [LicenseType2] VARCHAR(25) DEFAULT NULL,
+ [Type2Expiration] VARCHAR(25) DEFAULT NULL,
+ [HireDate] DATE DEFAULT NULL,
+ [TerminationDate] DATE DEFAULT NULL,
+ PRIMARY KEY(AgentID)
+)
+GO
+DROP TABLE Carriers
+CREATE TABLE [dbo].[Carriers]
+(
+ [CarrierID] INT IDENTITY(1,1) NOT NULL,
+ [Name] VARCHAR(25)DEFAULT NULL,
+ [Street] VARCHAR(25) DEFAULT NULL,
+ [City] VARCHAR(25) DEFAULT NULL,
+ [CarrierState] CHAR(2) DEFAULT NULL,
+ [Zip] INT DEFAULT NULL,
+ [Contact] VARCHAR(13) DEFAULT NULL,
+ [BusPhone] VARCHAR(13) DEFAULT NULL,
+ [CellPhone] VARCHAR(13) DEFAULT NULL,
+ [Email]VARCHAR(75) DEFAULT NULL,
+ PRIMARY KEY(CarrierID)
+)
+GO
+DROP TABLE Communications
+CREATE TABLE [dbo].[Communications]
+(
+ [CommunicationID] INT IDENTITY(1,1) NOT NULL,  
+ [CommunicationType] VARCHAR(25) NOT NULL,
+ [Outcome] VARCHAR(25)DEFAULT NULL,
+ [CommunicationDate] DATE DEFAULT NULL,
+ [CommunicationTime] VARCHAR(25) DEFAULT NULL,
+ [FollowUp] DATE DEFAULT NULL,
+ [AgentID] INT NOT NULL, 
+ [ContactID] INT NOT NULL, 
+ PRIMARY KEY(CommunicationID),
+ CONSTRAINT fk_cm_a FOREIGN KEY (AgentID)
+ REFERENCES Agents(AgentID), 
+ CONSTRAINT fk_cm_ct FOREIGN KEY (ContactID)
+ REFERENCES Contacts(ContactID)
+)
+GO
+
+DROP TABLE contacts
+GO
+CREATE TABLE [dbo].[Contacts]
+(
+ [ContactID] INT IDENTITY(1,1) NOT NULL,
+ [AgentID] INT NOT NULL,
+ [Title] VARCHAR(25) DEFAULT NULL,
+ [FirstName] VARCHAR (35) NOT NULL,
+ [LastName] VARCHAR (35) NOT NULL,
+ [BusinessName] VARCHAR (45) DEFAULT NULL,
+ [NumEmployees] INT DEFAULT NULL,
+ [ContactType] VARCHAR (25) NOT NULL,
+ [Street] VARCHAR (35)NOT NULL,
+ [City] VARCHAR (25)NOT NULL,
+ [ContactState] CHAR (2)NOT NULL,
+ [Zip] INT NOT NULL,
+ [BusPhone] VARCHAR (13)NOT NULL,
+ [HomePhone] VARCHAR (13) DEFAULT NULL,
+ [CellPhone] VARCHAR (13) DEFAULT NULL,
+ [Fax] VARCHAR (25) DEFAULT NULL,
+ [Email] VARCHAR (75)NOT NULL,
+ [Source] VARCHAR (45) DEFAULT NULL,
+ [Website] VARCHAR (200) DEFAULT NULL,
+ [Status] VARCHAR (25) DEFAULT NULL,
+ PRIMARY KEY(ContactID),
+ CONSTRAINT A_fk FOREIGN KEY (AgentID)
+ REFERENCES Agents(AgentID)
+)
+GO
+
+DROP TABLE policies
+CREATE TABLE [dbo].[Policies]
+(
+ [PolicyID] INT IDENTITY (1,1) NOT NULL,
+ [ContactID] INT NOT NULL,
+ [PolicyNumber] VARCHAR(10) NOT NULL,
+ [Carrier] VARCHAR(25) DEFAULT NULL, 
+ [TypeContact] VARCHAR(25) DEFAULT NULL,
+ [MonthlyCommission] DECIMAL(8,2) DEFAULT NULL,
+ [CarrierID] INT NOT NULL ,
+ [AgentID] INT DEFAULT NULL,
+ PRIMARY KEY(PolicyID),
+ CONSTRAINT fk_p_ct FOREIGN KEY (ContactID)
+ REFERENCES Contacts(ContactID), 
+ CONSTRAINT fk_p_cr FOREIGN KEY (CarrierID)
+ REFERENCES Carriers(CarrierID)
+)
+GO
+
+
